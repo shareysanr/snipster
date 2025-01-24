@@ -19,6 +19,7 @@ public class SnippetGUI extends Application {
 
         Button button = new Button("Enter Snippet Title");
         Label outputLabel = new Label();
+        Button removeButton = new Button("Remove Selected");
 
         ObservableList<String> snippets = FXCollections.observableArrayList();
         ListView<String> listView = new ListView<>(snippets);
@@ -34,10 +35,20 @@ public class SnippetGUI extends Application {
             textField.setText("");
         });
 
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, textField, button, outputLabel, listView);
+        removeButton.setOnAction(e -> {
+            String selectedSnippet = listView.getSelectionModel().getSelectedItem();
+            if (selectedSnippet != null) {
+                snippets.remove(selectedSnippet);
+                outputLabel.setText("Snippet removed");
+            } else {
+                outputLabel.setText("No snippet selected");
+            }
+        });
 
-        Scene scene = new Scene(layout, 300, 200);
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton);
+
+        Scene scene = new Scene(layout, 300, 400);
 
         primaryStage.setTitle("Snippet GUI");
         primaryStage.setScene(scene);
