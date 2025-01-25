@@ -12,14 +12,20 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 
 public class SnippetGUI extends Application {
+
+    private String snippetEdit = null;
+
     @Override
     public void start(Stage primaryStage) {
         Label label = new Label("Input Snippet");
         TextField textField = new TextField();
 
         Button button = new Button("Enter Snippet Title");
-        Label outputLabel = new Label();
         Button removeButton = new Button("Remove Selected");
+        Button editButton = new Button("Edit selected");
+
+        Label outputLabel = new Label();
+        
 
         ObservableList<String> snippets = FXCollections.observableArrayList();
         ListView<String> listView = new ListView<>(snippets);
@@ -29,8 +35,15 @@ public class SnippetGUI extends Application {
             if (input.equals("")) {
                 outputLabel.setText("Enter a valid snippet title");
             } else {
-                outputLabel.setText("Snippet Title: " + input);
-                snippets.add(input);
+                if (snippetEdit == null) {
+                    snippets.add(input);
+                    outputLabel.setText("Snippet Title: " + input);
+                } else {
+                    int idx = snippets.indexOf(snippetEdit);
+                    snippets.set(idx, input);
+                    outputLabel.setText("Snippet updated to: " + input);
+                }
+                
             }
             textField.setText("");
         });
@@ -45,10 +58,21 @@ public class SnippetGUI extends Application {
             }
         });
 
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton);
+        editButton.setOnAction(e -> {
+            String selectedSnippet = listView.getSelectionModel().getSelectedItem();
+            if (selectedSnippet != null) {
+                textField.setText(selectedSnippet);
+                snippetEdit = selectedSnippet;
+                outputLabel.setText("Editing snippet: " + selectedSnippet);
+            } else {
+                outputLabel.setText("No snippet selected");
+            }
+        });
 
-        Scene scene = new Scene(layout, 300, 400);
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton, editButton);
+
+        Scene scene = new Scene(layout, 350, 400);
 
         primaryStage.setTitle("Snippet GUI");
         primaryStage.setScene(scene);
