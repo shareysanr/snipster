@@ -38,6 +38,7 @@ public class SnippetGUI extends Application {
         Button button = new Button("Enter Snippet Title");
         Button removeButton = new Button("Remove Selected");
         Button editButton = new Button("Edit selected");
+        Button clearAllButton = new Button("Clear All Snippets");
         Button homeButton = new Button("Back to Home");
 
         homeButton.setOnAction(e -> start(primaryStage));
@@ -87,14 +88,20 @@ public class SnippetGUI extends Application {
             }
         });
 
+        clearAllButton.setOnAction(e -> {
+            snippets.clear();
+            snippetEdit = null;
+            outputLabel.setText("All snippets cleared.");
+        });
+
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton, editButton, homeButton);
+        layout.getChildren().addAll(label, textField, button, outputLabel, 
+            listView, removeButton, editButton, homeButton, clearAllButton);
 
         Scene scene = new Scene(layout, 350, 400);
 
         primaryStage.setTitle("Snippet GUI");
         primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     public static void main(String[] args) {
