@@ -17,12 +17,30 @@ public class SnippetGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Button goToSnippetManagement = new Button("Manage Snippets");
+
+        goToSnippetManagement.setOnAction(e -> showSnippetManagementPage(primaryStage));
+
+        VBox homeLayout = new VBox(10);
+        homeLayout.getChildren().addAll(goToSnippetManagement);
+
+        Scene homeScene = new Scene(homeLayout, 300, 200);
+
+        primaryStage.setTitle("Home Page");
+        primaryStage.setScene(homeScene);
+        primaryStage.show();
+    }
+
+    private void showSnippetManagementPage(Stage primaryStage) {
         Label label = new Label("Input Snippet");
         TextField textField = new TextField();
 
         Button button = new Button("Enter Snippet Title");
         Button removeButton = new Button("Remove Selected");
         Button editButton = new Button("Edit selected");
+        Button homeButton = new Button("Back to Home");
+
+        homeButton.setOnAction(e -> start(primaryStage));
 
         Label outputLabel = new Label();
         
@@ -70,7 +88,7 @@ public class SnippetGUI extends Application {
         });
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton, editButton);
+        layout.getChildren().addAll(label, textField, button, outputLabel, listView, removeButton, editButton, homeButton);
 
         Scene scene = new Scene(layout, 350, 400);
 
