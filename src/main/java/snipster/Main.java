@@ -18,7 +18,7 @@ public class Main {
         // SnippetRepository.deleteSnippet(1);
 
         // System.out.println("After deletion:");
-        SnippetRepository.readSnippets();
+        // SnippetRepository.readSnippets();
 
         System.out.println("Testing out Lucene Indexer");
         try {
@@ -37,6 +37,8 @@ public class Main {
             System.out.println("Error with Lucene Indexer");
             e.printStackTrace();
         }
+        SnippetRepository.clearTable();
+        SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
+        SnippetRepository.readSnippets();
     }
-    
 }

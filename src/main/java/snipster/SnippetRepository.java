@@ -89,4 +89,16 @@ public class SnippetRepository {
             e.printStackTrace();
         }
     }
+
+    public static void clearTable() {
+        String sql = "DELETE FROM snippets";
+        try (Connection conn = DatabaseConnector.connect();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+            System.out.println("Table cleared");
+        } catch (Exception e) {
+            System.out.println("Error clearing table.");
+            e.printStackTrace();
+        }
+    }
 }
