@@ -47,5 +47,8 @@ public class Main {
         for (String title: titles) {
             System.out.println(title);
         }
+
+        List<Integer> ids = SnippetRepository.readSnippetIds();
+        System.out.println("Snippet IDs: " + ids);
     }
 }

@@ -63,6 +63,22 @@ public class SnippetRepository {
         }
     }
 
+    public static List<Integer> readSnippetIds() {
+        String sql = "SELECT id FROM snippets";
+        List<Integer> ids = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error reading IDs");
+            e.printStackTrace();
+        }
+        return ids;
+    }
+
     public static List<String> readSnippetTitles() {
         String sql = "SELECT title FROM snippets";
         List<String> titles = new ArrayList<>();
