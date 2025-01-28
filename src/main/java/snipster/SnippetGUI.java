@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
+import java.util.List;
 
 public class SnippetGUI extends Application {
 
@@ -18,11 +19,13 @@ public class SnippetGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         Button goToSnippetManagement = new Button("Manage Snippets");
-
         goToSnippetManagement.setOnAction(e -> showSnippetManagementPage(primaryStage));
 
+        Button goToReadSnippet = new Button("View Snippets");
+        goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
+
         VBox homeLayout = new VBox(10);
-        homeLayout.getChildren().addAll(goToSnippetManagement);
+        homeLayout.getChildren().addAll(goToSnippetManagement, goToReadSnippet);
 
         Scene homeScene = new Scene(homeLayout, 300, 200);
 
@@ -98,9 +101,25 @@ public class SnippetGUI extends Application {
         layout.getChildren().addAll(label, textField, button, outputLabel, 
             listView, removeButton, editButton, homeButton, clearAllButton);
 
-        Scene scene = new Scene(layout, 350, 400);
+        Scene scene = new Scene(layout, 400, 400);
 
         primaryStage.setTitle("Snippet GUI");
+        primaryStage.setScene(scene);
+    }
+
+    private void showSnippetsPage(Stage primaryStage) {
+        List<String> titles = SnippetRepository.readSnippetTitles();
+
+        ObservableList<String> snippets = FXCollections.observableArrayList(titles);
+        ListView<String> listView = new ListView<>(snippets);
+
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(backButton, listView);
+
+        Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
     }
 
