@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SnippetRepository {
     public static void createTable() {
@@ -59,6 +61,22 @@ public class SnippetRepository {
             System.out.println("Error connecting to database");
             e.printStackTrace();
         }
+    }
+
+    public static List<String> readSnippetTitles() {
+        String sql = "SELECT title FROM snippets";
+        List<String> titles = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                titles.add(rs.getString("title"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error reading snippets");
+            e.printStackTrace();
+        }
+        return titles;
     }
 
     public static void updateSnippet(int id, String title, String code, String tags) {

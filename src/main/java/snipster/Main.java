@@ -1,4 +1,5 @@
 package snipster;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -39,6 +40,12 @@ public class Main {
         }
         SnippetRepository.clearTable();
         SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
+        SnippetRepository.insertSnippet("Second insertion", "print('This is second!')", "Python");
         SnippetRepository.readSnippets();
+        System.out.println("SNIPPET TITLES\n\n");
+        List<String> titles = SnippetRepository.readSnippetTitles();
+        for (String title: titles) {
+            System.out.println(title);
+        }
     }
 }
