@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import java.util.List;
+import java.util.ArrayList;
 
 public class SnippetGUI extends Application {
 
@@ -112,9 +113,15 @@ public class SnippetGUI extends Application {
     }
 
     private void showSnippetsPage(Stage primaryStage) {
+        List<Integer> ids = SnippetRepository.readSnippetIds();
         List<String> titles = SnippetRepository.readSnippetTitles();
 
-        ObservableList<String> snippets = FXCollections.observableArrayList(titles);
+        List<String> snippetList = new ArrayList<>();
+        for (int i = 0; i < Math.min(ids.size(), titles.size()); i++) {
+            snippetList.add(ids.get(i) + " - " + titles.get(i));
+        }
+
+        ObservableList<String> snippets = FXCollections.observableArrayList(snippetList);
         ListView<String> listView = new ListView<>(snippets);
 
         Button backButton = new Button("Back to Home");
