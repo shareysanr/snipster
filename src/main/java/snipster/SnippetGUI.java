@@ -23,17 +23,21 @@ public class SnippetGUI extends Application {
         Button goToSnippetManagement = new Button("Manage Snippets");
         goToSnippetManagement.setOnAction(e -> showSnippetManagementPage(primaryStage));
 
-        Button goToReadSnippet = new Button("View Snippets");
-        goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
-
         Button createSnippetButton = new Button("Create Snippet");
         createSnippetButton.setOnAction(e -> createSnippetPage(primaryStage));
+
+        Button goToReadSnippet = new Button("View Snippets");
+        goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
 
         Button updateSnippetButton = new Button("Update Snippet");
         updateSnippetButton.setOnAction(e -> updateSnippetPage(primaryStage));
 
+        Button deleteSnippetButton = new Button("Delete Snippet");
+        deleteSnippetButton.setOnAction(e -> deleteSnippetPage(primaryStage));
+
         VBox homeLayout = new VBox(10);
-        homeLayout.getChildren().addAll(goToSnippetManagement, goToReadSnippet, createSnippetButton, updateSnippetButton);
+        homeLayout.getChildren().addAll(goToSnippetManagement, goToReadSnippet, 
+            createSnippetButton, updateSnippetButton, deleteSnippetButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
 
@@ -230,6 +234,38 @@ public class SnippetGUI extends Application {
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
     }
+
+    private void deleteSnippetPage(Stage primaryStage) {
+        Label idLabel = new Label("ID: ");
+        TextField idField = new TextField();
+
+        Button submit = new Button("Delete");
+        Label output = new Label("");
+
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        submit.setOnAction(e -> {
+            String idString = idField.getText().trim();
+            if (idString.isEmpty()) {
+                output.setText("At least one field is missing");
+            } else {
+                int id = Integer.parseInt(idString);
+                SnippetRepository.deleteSnippet(id);
+                output.setText("Snippet deleted successfully");
+                idField.setText("");
+            }
+        });
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(idLabel, idField,
+            submit, output,
+            backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
+    }
+
 
     public static void main(String[] args) {
         launch(args);
