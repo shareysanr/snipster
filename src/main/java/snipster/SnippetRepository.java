@@ -62,7 +62,7 @@ public class SnippetRepository {
         return null;
     }
     
-    public static void readSnippets() {
+    public static void printSnippets() {
         String sql = "SELECT * FROM snippets";
         try (Connection conn = DatabaseConnector.connect();
             Statement stmt = conn.createStatement();
@@ -79,6 +79,26 @@ public class SnippetRepository {
             System.out.println("Error connecting to database");
             e.printStackTrace();
         }
+    }
+
+    public static List<Snippet> readSnippets() {
+        String sql = "SELECT id, title, code, tags FROM snippets";
+        List<Snippet> snippets = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String title = rs.getString("title");
+                String code = rs.getString("code");
+                String tags = rs.getString("tags");
+                snippets.add(new Snippet(id, title, code, tags));
+            }
+        } catch (Exception e) {
+            System.out.println("Error reading snippets.");
+            e.printStackTrace();
+        }
+        return snippets;
     }
 
     public static List<Integer> readSnippetIds() {
