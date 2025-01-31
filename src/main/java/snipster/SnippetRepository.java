@@ -43,6 +43,24 @@ public class SnippetRepository {
             e.printStackTrace();
         }
     }
+
+    public static String readSnippet(int id) {
+        String sql = "SELECT title FROM snippets WHERE id = ?";
+
+        try (Connection conn = DatabaseConnector.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("title");
+            }
+        } catch (Exception e) {
+            System.out.println("Error reading ID");
+            e.printStackTrace();
+        }
+        return null;
+    }
     
     public static void readSnippets() {
         String sql = "SELECT * FROM snippets";

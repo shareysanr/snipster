@@ -16,18 +16,16 @@ import java.util.ArrayList;
 
 public class SnippetGUI extends Application {
 
-    private String snippetEdit = null;
-
     @Override
     public void start(Stage primaryStage) {
-        Button goToSnippetManagement = new Button("Manage Snippets");
-        goToSnippetManagement.setOnAction(e -> showSnippetManagementPage(primaryStage));
-
         Button createSnippetButton = new Button("Create Snippet");
         createSnippetButton.setOnAction(e -> createSnippetPage(primaryStage));
 
         Button goToReadSnippet = new Button("View Snippets");
         goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
+
+        Button searchSnippetButton = new Button("Search Snippet");
+        searchSnippetButton.setOnAction(e -> searchSnippetPage(primaryStage));
 
         Button updateSnippetButton = new Button("Update Snippet");
         updateSnippetButton.setOnAction(e -> updateSnippetPage(primaryStage));
@@ -36,8 +34,8 @@ public class SnippetGUI extends Application {
         deleteSnippetButton.setOnAction(e -> deleteSnippetPage(primaryStage));
 
         VBox homeLayout = new VBox(10);
-        homeLayout.getChildren().addAll(goToSnippetManagement, goToReadSnippet, 
-            createSnippetButton, updateSnippetButton, deleteSnippetButton);
+        homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet,
+            searchSnippetButton ,updateSnippetButton, deleteSnippetButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
 
@@ -46,79 +44,39 @@ public class SnippetGUI extends Application {
         primaryStage.show();
     }
 
-    private void showSnippetManagementPage(Stage primaryStage) {
-        Label label = new Label("Input Snippet");
-        TextField textField = new TextField();
+    private void searchSnippetPage(Stage primaryStage) {
+        Label idLabel = new Label("Enter Snippet ID:");
+        TextField idField = new TextField();
 
-        Button button = new Button("Enter Snippet Title");
-        Button removeButton = new Button("Remove Selected");
-        Button editButton = new Button("Edit selected");
-        Button clearAllButton = new Button("Clear All Snippets");
-        Button homeButton = new Button("Back to Home");
+        Button searchButton = new Button("Search");
+        Label output = new Label();
 
-        homeButton.setOnAction(e -> start(primaryStage));
-
-        Label outputLabel = new Label();
-        
-
-        ObservableList<String> snippets = FXCollections.observableArrayList();
-        ListView<String> listView = new ListView<>(snippets);
-
-        button.setOnAction(e -> {
-            String input = textField.getText().trim();
-            if (input.equals("")) {
-                outputLabel.setText("Enter a valid snippet title");
+        searchButton.setOnAction(e -> {
+            String idString = idField.getText().trim();
+            if (idString.isEmpty()) {
+                output.setText("ID field is missing");
             } else {
-                if (snippetEdit == null) {
-                    snippets.add(input);
-                    outputLabel.setText("Snippet Title: " + input);
+                int id = Integer.parseInt(idString);
+                String title = SnippetRepository.readSnippet(id);
+                if (title == null) {
+                    output.setText("Snippet not found for id: " + id);
                 } else {
-                    int idx = snippets.indexOf(snippetEdit);
-                    snippets.set(idx, input);
-                    outputLabel.setText("Snippet updated to: " + input);
+                    output.setText("Title: " + title);
                 }
-                
-            }
-            textField.setText("");
-        });
-
-        removeButton.setOnAction(e -> {
-            String selectedSnippet = listView.getSelectionModel().getSelectedItem();
-            if (selectedSnippet != null) {
-                snippets.remove(selectedSnippet);
-                outputLabel.setText("Snippet removed");
-            } else {
-                outputLabel.setText("No snippet selected");
+                idField.setText("");
             }
         });
 
-        editButton.setOnAction(e -> {
-            String selectedSnippet = listView.getSelectionModel().getSelectedItem();
-            if (selectedSnippet != null) {
-                textField.setText(selectedSnippet);
-                snippetEdit = selectedSnippet;
-                outputLabel.setText("Editing snippet: " + selectedSnippet);
-            } else {
-                outputLabel.setText("No snippet selected");
-            }
-        });
-
-        clearAllButton.setOnAction(e -> {
-            snippets.clear();
-            snippetEdit = null;
-            outputLabel.setText("All snippets cleared.");
-        });
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, textField, button, outputLabel, 
-            listView, removeButton, editButton, homeButton, clearAllButton);
+        layout.getChildren().addAll(idLabel, idField, searchButton, output, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
-
-        primaryStage.setTitle("Snippet GUI");
         primaryStage.setScene(scene);
     }
-
+        
     private void showSnippetsPage(Stage primaryStage) {
         List<Integer> ids = SnippetRepository.readSnippetIds();
         List<String> titles = SnippetRepository.readSnippetTitles();
@@ -248,7 +206,7 @@ public class SnippetGUI extends Application {
         submit.setOnAction(e -> {
             String idString = idField.getText().trim();
             if (idString.isEmpty()) {
-                output.setText("At least one field is missing");
+                output.setText("ID field is missing");
             } else {
                 int id = Integer.parseInt(idString);
                 SnippetRepository.deleteSnippet(id);
