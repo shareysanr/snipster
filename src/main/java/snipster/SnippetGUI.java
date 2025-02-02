@@ -78,16 +78,9 @@ public class SnippetGUI extends Application {
     }
         
     private void showSnippetsPage(Stage primaryStage) {
-        List<Integer> ids = SnippetRepository.readSnippetIds();
-        List<String> titles = SnippetRepository.readSnippetTitles();
-
-        List<String> snippetList = new ArrayList<>();
-        for (int i = 0; i < Math.min(ids.size(), titles.size()); i++) {
-            snippetList.add(ids.get(i) + " - " + titles.get(i));
-        }
-
-        ObservableList<String> snippets = FXCollections.observableArrayList(snippetList);
-        ListView<String> listView = new ListView<>(snippets);
+        List<Snippet> snippetList = SnippetRepository.readSnippets();
+        ObservableList<Snippet> snippets = FXCollections.observableArrayList(snippetList);
+        ListView<Snippet> listView = new ListView<>(snippets);
 
         Button backButton = new Button("Back to Home");
         backButton.setOnAction(e -> start(primaryStage));

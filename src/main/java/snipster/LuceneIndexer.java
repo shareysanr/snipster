@@ -15,6 +15,10 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.index.Term;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -29,15 +33,35 @@ public class LuceneIndexer {
         indexWriter = new IndexWriter(indexDirectory, config);
     }
 
-    public void indexSnippet(String title, String code, String tags) throws IOException {
+    public void indexSnippet(int id, String title, String code, String tags) throws IOException {
         Document doc = new Document();
+        doc.add(new StringField("id", String.valueOf(id), StringField.Store.YES));
         doc.add(new TextField("title", title, TextField.Store.YES));
         doc.add(new TextField("code", code, TextField.Store.YES));
-        doc.add(new StringField("tags", tags, StringField.Store.YES));
+        doc.add(new TextField("tags", tags, TextField.Store.YES));
         indexWriter.addDocument(doc);
+
+        close();
     }
 
-    public void searchSnippets(String queryStr) throws Exception {
+    // public void searchSnippets(String queryStr) throws Exception {
+    //     DirectoryReader reader = DirectoryReader.open(indexDirectory);
+    //     IndexSearcher searcher = new IndexSearcher(reader);
+    //     StoredFields storedFields = searcher.storedFields();
+
+    //     Query query = new QueryParser("code", new StandardAnalyzer()).parse(queryStr);
+    //     TopDocs results = searcher.search(query, 10);
+
+    //     for (ScoreDoc hit : results.scoreDocs) {
+    //         Document doc = storedFields.document(hit.doc);
+    //         System.out.println("Title is: " + doc.get("title"));
+    //     }
+
+    //     reader.close();
+    // }
+
+    public List<Snippet> searchSnippets(String queryStr) throws Exception {
+        List<Snippet> searchResults = new ArrayList<>();
         DirectoryReader reader = DirectoryReader.open(indexDirectory);
         IndexSearcher searcher = new IndexSearcher(reader);
         StoredFields storedFields = searcher.storedFields();
@@ -47,10 +71,36 @@ public class LuceneIndexer {
 
         for (ScoreDoc hit : results.scoreDocs) {
             Document doc = storedFields.document(hit.doc);
-            System.out.println("Title is: " + doc.get("title"));
+            String idString = doc.get("id");
+            int id = Integer.parseInt(idString);
+            String title = doc.get("title");
+            String code = doc.get("code");
+            String tags = doc.get("tags");
+            //System.out.println("Title is: " + doc.get("title"));
+            searchResults.add(new Snippet(id, title, code, tags));
         }
 
         reader.close();
+        return searchResults;
+    }
+
+    public void updateIndex(int id, String title, String code, String tags) throws IOException {
+        indexWriter.deleteDocuments(new Term("id", String.valueOf(id)));
+
+        Document doc = new Document();
+        doc.add(new StringField("id", String.valueOf(id), StringField.Store.YES));
+        doc.add(new TextField("title", title, TextField.Store.YES));
+        doc.add(new TextField("code", code, TextField.Store.YES));
+        doc.add(new TextField("tags", tags, TextField.Store.YES));
+        indexWriter.addDocument(doc);
+
+        close();
+    }
+
+    public void deleteIndex(int id) throws IOException {
+        indexWriter.deleteDocuments(new Term("id", String.valueOf(id)));
+
+        close();
     }
 
     public void close() throws IOException {
