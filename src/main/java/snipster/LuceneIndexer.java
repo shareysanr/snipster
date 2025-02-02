@@ -103,6 +103,36 @@ public class LuceneIndexer {
         close();
     }
 
+    public void printAllSnippets() throws IOException {
+        DirectoryReader reader = DirectoryReader.open(indexDirectory);
+        IndexSearcher searcher = new IndexSearcher(reader);
+        StoredFields storedFields = searcher.storedFields();
+
+        System.out.println("All Snippets:");
+
+        for (int i = 0; i < reader.maxDoc(); i++) {
+            Document doc = storedFields.document(i);
+            String id = doc.get("id");
+            String title = doc.get("title");
+            String code = doc.get("code");
+            String tags = doc.get("tags");
+
+            System.out.println("ID: " + id);
+            System.out.println("Title: " + title);
+            System.out.println("Code: " + code);
+            System.out.println("Tags: " + tags);
+            System.out.println("------------");
+        }
+
+        reader.close();
+    }
+
+    public void clearIndex() throws IOException {
+        indexWriter.deleteAll();
+        System.out.println("Cleared all indexed snippets");
+        close();
+    }
+
     public void close() throws IOException {
         indexWriter.close();
     } 

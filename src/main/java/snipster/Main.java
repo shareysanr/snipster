@@ -26,21 +26,16 @@ public class Main {
             LuceneIndexer indexer = new LuceneIndexer("index");
             // indexer.indexSnippet("For loop", "for(int i = 0; i < 10; i++) {}", "Java");
             // indexer.indexSnippet("Hello World", "System.out.println(\"Hello World\");", "Java");
-
-            System.out.println("Searching 'Hello':");
-            indexer.searchSnippets("Hello");
-
-            System.out.println("Searching 'i++':");
-            indexer.searchSnippets("i++");
-
+            indexer.clearIndex();
+            indexer.printAllSnippets();
             indexer.close();
         } catch (Exception e) {
             System.out.println("Error with Lucene Indexer");
             e.printStackTrace();
         }
-        SnippetRepository.clearTable();
-        SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
-        SnippetRepository.insertSnippet("Second insertion", "print('This is second!')", "Python");
+        // SnippetRepository.clearTable();
+        // SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
+        // SnippetRepository.insertSnippet("Second insertion", "print('This is second!')", "Python");
         SnippetRepository.readSnippets();
         System.out.println("SNIPPET TITLES\n\n");
         List<String> titles = SnippetRepository.readSnippetTitles();
