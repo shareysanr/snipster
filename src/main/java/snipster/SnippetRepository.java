@@ -37,6 +37,15 @@ public class SnippetRepository {
             pstmt.setString(2, code);
             pstmt.setString(3, tags);
             pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int id = rs.getInt(1);
+
+                LuceneIndexer indexer = new LuceneIndexer("index");
+                indexer.indexSnippet(id, title, code, tags);
+            }
+
             System.out.println("Snippet inserted");
         } catch (Exception e) {
             System.out.println("Error connecting to database");
@@ -142,6 +151,10 @@ public class SnippetRepository {
             pstmt.setString(3, tags);
             pstmt.setInt(4, id);
             pstmt.executeUpdate();
+
+            LuceneIndexer indexer = new LuceneIndexer("index");
+            indexer.updateIndex(id, title, code, tags);
+
             System.out.println("Snippet updated");
         } catch (Exception e) {
             System.out.println("Error connecting to database");
@@ -155,6 +168,10 @@ public class SnippetRepository {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
+
+            LuceneIndexer indexer = new LuceneIndexer("index");
+            indexer.deleteIndex(id);
+
             System.out.println("Snippet deleted");
         } catch (Exception e) {
             System.out.println("Error connecting to database");
@@ -167,6 +184,10 @@ public class SnippetRepository {
         try (Connection conn = DatabaseConnector.connect();
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
+
+            LuceneIndexer indexer = new LuceneIndexer("index");
+            indexer.clearIndex();
+
             System.out.println("Table cleared");
         } catch (Exception e) {
             System.out.println("Error clearing table.");

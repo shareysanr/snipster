@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SnippetGUI extends Application {
@@ -82,11 +83,21 @@ public class SnippetGUI extends Application {
         ObservableList<Snippet> snippets = FXCollections.observableArrayList(snippetList);
         ListView<Snippet> listView = new ListView<>(snippets);
 
+        Button printLuceneButton = new Button("Print Lucene Index");
+        printLuceneButton.setOnAction(e -> {
+            try {
+                new LuceneIndexer("index").printAllSnippets();
+            } catch (IOException ex) {
+                System.out.println("Error printing Lucene index");
+                ex.printStackTrace();
+            }
+        });
+
         Button backButton = new Button("Back to Home");
         backButton.setOnAction(e -> start(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(listView, backButton);
+        layout.getChildren().addAll(listView, printLuceneButton, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
