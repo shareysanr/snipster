@@ -32,7 +32,8 @@ public class SnippetRepository {
     public static void insertSnippet(String title, String code, String tags) {
         String sql = "INSERT INTO snippets (title, code, tags) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnector.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            LuceneIndexer indexer = LuceneIndexer.getInstance()) {
             pstmt.setString(1, title);
             pstmt.setString(2, code);
             pstmt.setString(3, tags);
@@ -41,8 +42,7 @@ public class SnippetRepository {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 int id = rs.getInt(1);
-
-                LuceneIndexer indexer = new LuceneIndexer("index");
+                System.out.println("THIS IS THE ID IN INSERT SNIPPET: " + id);
                 indexer.indexSnippet(id, title, code, tags);
             }
 
@@ -145,15 +145,17 @@ public class SnippetRepository {
     public static void updateSnippet(int id, String title, String code, String tags) {
         String sql = "UPDATE snippets SET title = ?, code = ?, tags = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            LuceneIndexer indexer = LuceneIndexer.getInstance()) {
             pstmt.setString(1, title);
             pstmt.setString(2, code);
             pstmt.setString(3, tags);
             pstmt.setInt(4, id);
             pstmt.executeUpdate();
 
-            LuceneIndexer indexer = new LuceneIndexer("index");
+            //LuceneIndexer indexer = new LuceneIndexer("index");
             indexer.updateIndex(id, title, code, tags);
+            //indexer.updateIndex(id, title, code, tags);
 
             System.out.println("Snippet updated");
         } catch (Exception e) {
@@ -165,11 +167,13 @@ public class SnippetRepository {
     public static void deleteSnippet(int id) {
         String sql = "DELETE FROM snippets WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             LuceneIndexer indexer = LuceneIndexer.getInstance()) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
-
-            LuceneIndexer indexer = new LuceneIndexer("index");
+            
+            //LuceneIndexer indexer = new LuceneIndexer("index");
+            //indexer.deleteIndex(id);
             indexer.deleteIndex(id);
 
             System.out.println("Snippet deleted");
@@ -182,10 +186,11 @@ public class SnippetRepository {
     public static void clearTable() {
         String sql = "DELETE FROM snippets";
         try (Connection conn = DatabaseConnector.connect();
-             Statement stmt = conn.createStatement()) {
+             Statement stmt = conn.createStatement();
+             LuceneIndexer indexer = LuceneIndexer.getInstance()) {
             stmt.executeUpdate(sql);
 
-            LuceneIndexer indexer = new LuceneIndexer("index");
+            //LuceneIndexer indexer = new LuceneIndexer("index");
             indexer.clearIndex();
 
             System.out.println("Table cleared");

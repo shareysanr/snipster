@@ -1,49 +1,43 @@
 package snipster;
 import java.util.List;
+import java.io.IOException;
+
 
 public class Main {
     public static void main(String[] args) {
-        // SnippetRepository.createTable();
 
-        // SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
-        // SnippetRepository.insertSnippet("Second insertion", "print('This is second!')", "Python");
-        
-        // System.out.println("After insertions:");
-        // SnippetRepository.readSnippets();
+        // try {
+        //     System.out.println("Clearing database and Lucene index");
+        //     SnippetRepository.clearTable();
+        //     System.out.println("Database and Lucene index cleared\n");
 
-        // SnippetRepository.updateSnippet(1, "Updated Title", "System.out.println('Updated Code');", "Java");
-        
-        // System.out.println("After update:");
-        // SnippetRepository.readSnippets();
+        //     System.out.println("Printing database contents after clearing");
+        //     SnippetRepository.printSnippets();
+            
+        //     System.out.println("Printing Lucene index after clearing");
+        //     try (LuceneIndexer indexer = LuceneIndexer.getInstance()) {
+        //         indexer.printAllSnippets();
+        //     }
+            
+        // } catch (Exception e) {
+        //     System.out.println("Error during clearing");
+        //     e.printStackTrace();
+        // }
 
-        // SnippetRepository.deleteSnippet(1);
+        System.out.println("Inserting snippets");
+        SnippetRepository.insertSnippet("Hello World", "print('Hello World')", "Python");
+        SnippetRepository.insertSnippet("Loop", "for i in range(10): print(i)", "Python");
+        SnippetRepository.insertSnippet("Java Example", "System.out.println(\"Hello Java\");", "Java");
 
-        // System.out.println("After deletion:");
-        // SnippetRepository.readSnippets();
-
-        System.out.println("Testing out Lucene Indexer");
-        try {
-            LuceneIndexer indexer = new LuceneIndexer("index");
-            // indexer.indexSnippet("For loop", "for(int i = 0; i < 10; i++) {}", "Java");
-            // indexer.indexSnippet("Hello World", "System.out.println(\"Hello World\");", "Java");
-            indexer.clearIndex();
+        try (LuceneIndexer indexer = LuceneIndexer.getInstance()) {
+            System.out.println("Printing database after insertions:");
+            SnippetRepository.printSnippets();
+            
+            System.out.println("Printing Lucene indexes after insertions:");
             indexer.printAllSnippets();
-            indexer.close();
         } catch (Exception e) {
-            System.out.println("Error with Lucene Indexer");
+            System.out.println("Error initializing LuceneIndexer");
             e.printStackTrace();
         }
-        // SnippetRepository.clearTable();
-        // SnippetRepository.insertSnippet("First insertion", "print('This is first!')", "Python");
-        // SnippetRepository.insertSnippet("Second insertion", "print('This is second!')", "Python");
-        SnippetRepository.readSnippets();
-        System.out.println("SNIPPET TITLES\n\n");
-        List<String> titles = SnippetRepository.readSnippetTitles();
-        for (String title: titles) {
-            System.out.println(title);
-        }
-
-        List<Integer> ids = SnippetRepository.readSnippetIds();
-        System.out.println("Snippet IDs: " + ids);
     }
 }

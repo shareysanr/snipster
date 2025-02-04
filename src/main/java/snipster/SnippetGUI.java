@@ -85,8 +85,9 @@ public class SnippetGUI extends Application {
 
         Button printLuceneButton = new Button("Print Lucene Index");
         printLuceneButton.setOnAction(e -> {
-            try {
-                new LuceneIndexer("index").printAllSnippets();
+            try (LuceneIndexer indexer = LuceneIndexer.getInstance()){
+                //new LuceneIndexer("index").printAllSnippets();
+                indexer.printAllSnippets();
             } catch (IOException ex) {
                 System.out.println("Error printing Lucene index");
                 ex.printStackTrace();

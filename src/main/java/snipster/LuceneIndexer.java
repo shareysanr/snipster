@@ -23,7 +23,8 @@ import java.util.List;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class LuceneIndexer {
+public class LuceneIndexer implements AutoCloseable {
+    private static LuceneIndexer instance;
     private Directory indexDirectory;
     private IndexWriter indexWriter;
 
@@ -33,6 +34,13 @@ public class LuceneIndexer {
         indexWriter = new IndexWriter(indexDirectory, config);
     }
 
+    public static synchronized LuceneIndexer getInstance() throws IOException {
+        if (instance == null) {
+            instance = new LuceneIndexer("index");
+        }
+        return instance;
+    }
+
     public void indexSnippet(int id, String title, String code, String tags) throws IOException {
         Document doc = new Document();
         doc.add(new StringField("id", String.valueOf(id), StringField.Store.YES));
@@ -40,25 +48,7 @@ public class LuceneIndexer {
         doc.add(new TextField("code", code, TextField.Store.YES));
         doc.add(new TextField("tags", tags, TextField.Store.YES));
         indexWriter.addDocument(doc);
-
-        close();
     }
-
-    // public void searchSnippets(String queryStr) throws Exception {
-    //     DirectoryReader reader = DirectoryReader.open(indexDirectory);
-    //     IndexSearcher searcher = new IndexSearcher(reader);
-    //     StoredFields storedFields = searcher.storedFields();
-
-    //     Query query = new QueryParser("code", new StandardAnalyzer()).parse(queryStr);
-    //     TopDocs results = searcher.search(query, 10);
-
-    //     for (ScoreDoc hit : results.scoreDocs) {
-    //         Document doc = storedFields.document(hit.doc);
-    //         System.out.println("Title is: " + doc.get("title"));
-    //     }
-
-    //     reader.close();
-    // }
 
     public List<Snippet> searchSnippets(String queryStr) throws Exception {
         List<Snippet> searchResults = new ArrayList<>();
@@ -93,14 +83,10 @@ public class LuceneIndexer {
         doc.add(new TextField("code", code, TextField.Store.YES));
         doc.add(new TextField("tags", tags, TextField.Store.YES));
         indexWriter.addDocument(doc);
-
-        close();
     }
 
     public void deleteIndex(int id) throws IOException {
         indexWriter.deleteDocuments(new Term("id", String.valueOf(id)));
-
-        close();
     }
 
     public void printAllSnippets() throws IOException {
@@ -130,10 +116,31 @@ public class LuceneIndexer {
     public void clearIndex() throws IOException {
         indexWriter.deleteAll();
         System.out.println("Cleared all indexed snippets");
-        close();
     }
 
+    @Override
     public void close() throws IOException {
-        indexWriter.close();
-    } 
+        if (indexWriter != null) {
+            indexWriter.close();
+            System.out.println("IndexWriter closed");
+            instance = null;
+        }
+    }
+
 }
+    // public void searchSnippets(String queryStr) throws Exception {
+    //     DirectoryReader reader = DirectoryReader.open(indexDirectory);
+    //     IndexSearcher searcher = new IndexSearcher(reader);
+    //     StoredFields storedFields = searcher.storedFields();
+
+    //     Query query = new QueryParser("code", new StandardAnalyzer()).parse(queryStr);
+    //     TopDocs results = searcher.search(query, 10);
+
+    //     for (ScoreDoc hit : results.scoreDocs) {
+    //         Document doc = storedFields.document(hit.doc);
+    //         System.out.println("Title is: " + doc.get("title"));
+    //     }
+
+    //     reader.close();
+    // }
+
