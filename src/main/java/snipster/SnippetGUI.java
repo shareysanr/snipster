@@ -46,25 +46,28 @@ public class SnippetGUI extends Application {
     }
 
     private void searchSnippetPage(Stage primaryStage) {
-        Label idLabel = new Label("Enter Snippet ID:");
-        TextField idField = new TextField();
+        Label queryLabel = new Label("Enter Query:");
+        TextField queryField = new TextField();
 
         Button searchButton = new Button("Search");
         Label output = new Label();
 
+        ObservableList<Snippet> snippets = FXCollections.observableArrayList();
+        ListView<Snippet> listView = new ListView<>(snippets);
+
         searchButton.setOnAction(e -> {
-            String idString = idField.getText().trim();
-            if (idString.isEmpty()) {
-                output.setText("ID field is missing");
+            String query = queryField.getText().trim();
+            if (query.isEmpty()) {
+                output.setText("Query Field Missing");
             } else {
-                int id = Integer.parseInt(idString);
-                String title = SnippetRepository.readSnippet(id);
-                if (title == null) {
-                    output.setText("Snippet not found for id: " + id);
-                } else {
-                    output.setText("Title: " + title);
+                try (LuceneIndexer indexer = LuceneIndexer.getInstance()) {
+                    List<Snippet> snippetList = indexer.searchSnippets(query);
+                    snippets.setAll(snippetList);
+                    output.setText("Snippets shown above");
+                } catch (Exception ex) {
+                    System.out.println("Error searching for snippet");
+                    ex.printStackTrace();
                 }
-                idField.setText("");
             }
         });
 
@@ -72,7 +75,7 @@ public class SnippetGUI extends Application {
         backButton.setOnAction(e -> start(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(idLabel, idField, searchButton, output, backButton);
+        layout.getChildren().addAll(queryLabel, queryField, searchButton, listView, output, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
