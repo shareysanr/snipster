@@ -86,6 +86,13 @@ public class SnippetGUI extends Application {
         ObservableList<Snippet> snippets = FXCollections.observableArrayList(snippetList);
         ListView<Snippet> listView = new ListView<>(snippets);
 
+        Button doubleClickButton = new Button("Double Click");
+        doubleClickButton.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                System.out.println("Double clicked button");
+            }
+        });
+
         Button printLuceneButton = new Button("Print Lucene Index");
         printLuceneButton.setOnAction(e -> {
             try (LuceneIndexer indexer = LuceneIndexer.getInstance()){
@@ -101,7 +108,7 @@ public class SnippetGUI extends Application {
         backButton.setOnAction(e -> start(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(listView, printLuceneButton, backButton);
+        layout.getChildren().addAll(listView, doubleClickButton, printLuceneButton, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
