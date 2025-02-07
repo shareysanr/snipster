@@ -93,6 +93,13 @@ public class SnippetGUI extends Application {
             }
         });
 
+        listView.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                Snippet s = listView.getSelectionModel().getSelectedItem();
+                System.out.println("Snippet is: " + s);
+            }
+        });
+
         Button printLuceneButton = new Button("Print Lucene Index");
         printLuceneButton.setOnAction(e -> {
             try (LuceneIndexer indexer = LuceneIndexer.getInstance()){
