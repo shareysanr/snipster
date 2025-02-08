@@ -96,7 +96,7 @@ public class SnippetGUI extends Application {
         listView.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Snippet s = listView.getSelectionModel().getSelectedItem();
-                System.out.println("Snippet is: " + s);
+                showSnippetDetails(primaryStage, s);
             }
         });
 
@@ -116,6 +116,21 @@ public class SnippetGUI extends Application {
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(listView, doubleClickButton, printLuceneButton, backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
+    }
+
+    private void showSnippetDetails(Stage primaryStage, Snippet snippet) {
+        Label titleLabel = new Label("Title:\n" + snippet.getTitle());
+        Label codeLabel = new Label("Code:\n" + snippet.getCode());
+        Label tagsLabel = new Label("Tags:\n" + snippet.getTags());
+
+        Button backButton = new Button("Back to Snippets");
+        backButton.setOnAction(e -> showSnippetsPage(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(titleLabel, codeLabel, tagsLabel, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
