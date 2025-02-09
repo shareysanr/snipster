@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -71,6 +72,15 @@ public class SnippetGUI extends Application {
             }
         });
 
+        listView.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                Snippet s = listView.getSelectionModel().getSelectedItem();
+                if (s != null) {
+                    showSnippetDetails(primaryStage, s);
+                }
+            }
+        });
+
         Button backButton = new Button("Back to Home");
         backButton.setOnAction(e -> start(primaryStage));
 
@@ -96,7 +106,9 @@ public class SnippetGUI extends Application {
         listView.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Snippet s = listView.getSelectionModel().getSelectedItem();
-                showSnippetDetails(primaryStage, s);
+                if (s != null) {
+                    showSnippetDetails(primaryStage, s);
+                }
             }
         });
 
@@ -141,7 +153,8 @@ public class SnippetGUI extends Application {
         TextField titleField = new TextField();
 
         Label codeLabel = new Label("Code: ");
-        TextField codeField = new TextField();
+        TextArea codeArea = new TextArea();
+        codeArea.setWrapText(false);
 
         Label tagsLabel = new Label("Tags: ");
         TextField tagsField = new TextField();
@@ -154,7 +167,7 @@ public class SnippetGUI extends Application {
         
         submit.setOnAction(e -> {
             String title = titleField.getText().trim();
-            String code = codeField.getText().trim();
+            String code = codeArea.getText().trim();
             String tags = tagsField.getText().trim();
     
             if (title.isEmpty() || code.isEmpty() || tags.isEmpty()) {
@@ -163,14 +176,14 @@ public class SnippetGUI extends Application {
                 SnippetRepository.insertSnippet(title, code, tags);
                 output.setText("Snippet added successfully");
                 titleField.setText("");
-                codeField.setText("");
+                codeArea.setText("");
                 tagsField.setText("");
             }
         });
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(titleLabel, titleField,
-            codeLabel, codeField,
+            codeLabel, codeArea,
             tagsLabel, tagsField,
             submit, output,
             backButton);
@@ -188,7 +201,8 @@ public class SnippetGUI extends Application {
         TextField titleField = new TextField();
 
         Label codeLabel = new Label("Code: ");
-        TextField codeField = new TextField();
+        TextArea codeArea = new TextArea();
+        codeArea.setWrapText(false);
 
         Label tagsLabel = new Label("Tags: ");
         TextField tagsField = new TextField();
@@ -202,7 +216,7 @@ public class SnippetGUI extends Application {
         submit.setOnAction(e -> {
             String idString = idField.getText().trim();
             String title = titleField.getText().trim();
-            String code = codeField.getText().trim();
+            String code = codeArea.getText().trim();
             String tags = tagsField.getText().trim();
     
             if (idString.isEmpty() || title.isEmpty() || code.isEmpty() || tags.isEmpty()) {
@@ -213,7 +227,7 @@ public class SnippetGUI extends Application {
                 output.setText("Snippet updated successfully");
                 idField.setText("");
                 titleField.setText("");
-                codeField.setText("");
+                codeArea.setText("");
                 tagsField.setText("");
             }
         });
@@ -221,7 +235,7 @@ public class SnippetGUI extends Application {
         VBox layout = new VBox(10);
         layout.getChildren().addAll(idLabel, idField,
             titleLabel, titleField,
-            codeLabel, codeField,
+            codeLabel, codeArea,
             tagsLabel, tagsField,
             submit, output,
             backButton);

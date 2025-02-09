@@ -6,23 +6,23 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
 
-        try {
-            System.out.println("Clearing database and Lucene index");
-            SnippetRepository.clearTable();
-            System.out.println("Database and Lucene index cleared\n");
+        // try {
+        //     System.out.println("Clearing database and Lucene index");
+        //     SnippetRepository.clearTable();
+        //     System.out.println("Database and Lucene index cleared\n");
 
-            System.out.println("Printing database contents after clearing");
-            SnippetRepository.printSnippets();
+        //     System.out.println("Printing database contents after clearing");
+        //     SnippetRepository.printSnippets();
             
-            System.out.println("Printing Lucene index after clearing");
-            try (LuceneIndexer indexer = LuceneIndexer.getInstance()) {
-                indexer.printAllSnippets();
-            }
+        //     System.out.println("Printing Lucene index after clearing");
+        //     try (LuceneIndexer indexer = LuceneIndexer.getInstance()) {
+        //         indexer.printAllSnippets();
+        //     }
             
-        } catch (Exception e) {
-            System.out.println("Error during clearing");
-            e.printStackTrace();
-        }
+        // } catch (Exception e) {
+        //     System.out.println("Error during clearing");
+        //     e.printStackTrace();
+        // }
 
         // System.out.println("Inserting snippets");
         // SnippetRepository.insertSnippet("Hello World", "print('Hello World')", "Python");
