@@ -26,6 +26,9 @@ public class SnippetGUI extends Application {
         Button goToReadSnippet = new Button("View Snippets");
         goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
 
+        Button viewFoldersButton = new Button("View Folders");
+        viewFoldersButton.setOnAction(e -> viewFoldersPage(primaryStage));
+
         Button searchSnippetButton = new Button("Search Snippet");
         searchSnippetButton.setOnAction(e -> searchSnippetPage(primaryStage));
 
@@ -36,7 +39,7 @@ public class SnippetGUI extends Application {
         deleteSnippetButton.setOnAction(e -> deleteSnippetPage(primaryStage));
 
         VBox homeLayout = new VBox(10);
-        homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet,
+        homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet, viewFoldersButton,
             searchSnippetButton ,updateSnippetButton, deleteSnippetButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
@@ -128,6 +131,17 @@ public class SnippetGUI extends Application {
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(listView, doubleClickButton, printLuceneButton, backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
+    }
+
+    private void viewFoldersPage(Stage primaryStage) {
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);

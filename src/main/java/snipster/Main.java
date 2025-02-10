@@ -39,5 +39,8 @@ public class Main {
         //     System.out.println("Error initializing LuceneIndexer");
         //     e.printStackTrace();
         // }
+
+        // Snippet details currently go back to view snippet page no matter what
+        // Change parameters to store page
     }
 }
