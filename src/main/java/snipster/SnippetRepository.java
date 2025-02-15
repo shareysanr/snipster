@@ -1,5 +1,7 @@
 package snipster;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -196,6 +198,36 @@ public class SnippetRepository {
             System.out.println("Table cleared");
         } catch (Exception e) {
             System.out.println("Error clearing table.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void exportSnippets(String filePath) {
+        String sql = "SELECT id, title, code, tags FROM snippets";
+
+        try (Connection conn = DatabaseConnector.connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            
+            writer.write("ID,Title,Code,Tags");
+            writer.newLine();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String title = rs.getString("title");
+                String code = rs.getString("code");
+                code = code.replace("\n", "\\n");
+                String tags = rs.getString("tags");
+
+                writer.write(id + "," + title + "," + code + "," + tags);
+                writer.newLine();
+            }
+
+            System.out.println("Snippets exported to " + filePath);
+
+        } catch (Exception e) {
+            System.out.println("Error exporting snippets");
             e.printStackTrace();
         }
     }

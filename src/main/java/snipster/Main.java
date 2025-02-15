@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-
+        SnippetRepository.exportSnippets("snippets.csv");
         // try {
         //     System.out.println("Clearing database and Lucene index");
         //     SnippetRepository.clearTable();
