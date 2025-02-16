@@ -38,15 +38,46 @@ public class SnippetGUI extends Application {
         Button deleteSnippetButton = new Button("Delete Snippet");
         deleteSnippetButton.setOnAction(e -> deleteSnippetPage(primaryStage));
 
+        Button exportSnippetButton = new Button("Export Snippets");
+        exportSnippetButton.setOnAction(e -> exportSnippetsPage(primaryStage));
+
         VBox homeLayout = new VBox(10);
         homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet, viewFoldersButton,
-            searchSnippetButton ,updateSnippetButton, deleteSnippetButton);
+            searchSnippetButton ,updateSnippetButton, deleteSnippetButton, exportSnippetButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
 
         primaryStage.setTitle("Home Page");
         primaryStage.setScene(homeScene);
         primaryStage.show();
+    }
+
+    private void exportSnippetsPage(Stage primaryStage) {
+        Button exportButton = new Button("Export Snippets");
+
+        Label fileLabel = new Label("Enter File Name:");
+        TextField fileField = new TextField();
+
+        Label output = new Label();
+        exportButton.setOnAction(e -> {
+            String fileName = fileField.getText().trim();
+            if (fileName.isEmpty() || !fileName.toLowerCase().endsWith(".csv")) {
+                output.setText("Invalid file Name");
+            } else {
+                SnippetRepository.exportSnippets(fileName);
+                output.setText("Snippets exported to " + fileName);
+            }
+            fileField.setText("");
+        });
+
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(fileLabel, fileField, exportButton, output, backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
     }
 
     private void searchSnippetPage(Stage primaryStage) {
