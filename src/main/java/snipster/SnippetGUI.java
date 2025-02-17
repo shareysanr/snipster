@@ -41,15 +41,39 @@ public class SnippetGUI extends Application {
         Button exportSnippetButton = new Button("Export Snippets");
         exportSnippetButton.setOnAction(e -> exportSnippetsPage(primaryStage));
 
+        Button clearSnippetsButton = new Button("Clear Snippets");
+        clearSnippetsButton.setOnAction(e -> clearSnippetsPage(primaryStage));
+
         VBox homeLayout = new VBox(10);
         homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet, viewFoldersButton,
-            searchSnippetButton ,updateSnippetButton, deleteSnippetButton, exportSnippetButton);
+            searchSnippetButton ,updateSnippetButton, deleteSnippetButton, exportSnippetButton,
+            clearSnippetsButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
 
         primaryStage.setTitle("Home Page");
         primaryStage.setScene(homeScene);
         primaryStage.show();
+    }
+
+    private void clearSnippetsPage(Stage primaryStage) {
+        Button clearButton = new Button("Clear Snippets");
+
+        Label output = new Label();
+
+        clearButton.setOnAction(e -> {
+            SnippetRepository.clearTable();
+            output.setText("Table cleared");
+        });
+
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(clearButton, output, backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
     }
 
     private void exportSnippetsPage(Stage primaryStage) {
