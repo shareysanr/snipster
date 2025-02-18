@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -207,11 +209,19 @@ public class SnippetGUI extends Application {
         Label codeLabel = new Label("Code:\n" + snippet.getCode());
         Label tagsLabel = new Label("Tags:\n" + snippet.getTags());
 
+        Button copyButton = new Button("Copy Code");
+        copyButton.setOnAction(e -> {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(snippet.getCode());
+            clipboard.setContent(content);
+        });
+
         Button backButton = new Button("Back to Snippets");
         backButton.setOnAction(e -> showSnippetsPage(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(titleLabel, codeLabel, tagsLabel, backButton);
+        layout.getChildren().addAll(titleLabel, codeLabel, tagsLabel, copyButton, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
