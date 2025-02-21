@@ -220,7 +220,7 @@ public class SnippetRepository {
                 code = code.replace("\n", "\\n");
                 String tags = rs.getString("tags");
 
-                writer.write(id + "," + title + "," + code + "," + tags);
+                writer.write("\"" + id + "\",\"" + title + "\",\"" + code + "\",\"" + tags + "\"");
                 writer.newLine();
             }
 
