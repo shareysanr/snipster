@@ -1,6 +1,8 @@
 package snipster;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -200,6 +202,35 @@ public class SnippetRepository {
             System.out.println("Error clearing table.");
             e.printStackTrace();
         }
+    }
+
+    public static List<Snippet> importCSVSnippets(String file){
+        List<Snippet> snippets = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            reader.readLine(); // Skip the headers
+            String line = reader.readLine();
+
+            while (line != null) {
+                String[] parts = line.split(",", 4);
+
+                int id = Integer.parseInt(parts[0]); 
+                String title = parts[1];
+                String code = parts[2];
+                code = code.replace("\\n", "\n");
+                String tags = parts[3];
+
+                snippets.add(new Snippet(id, title, code, tags));
+                line = reader.readLine();
+            }
+
+            System.out.println("Snippets imported");
+        } catch (Exception e) {
+            System.out.println("Error importing snippets");
+            e.printStackTrace();
+        }
+    
+        return snippets;
     }
 
     public static void exportSnippets(String filePath) {
