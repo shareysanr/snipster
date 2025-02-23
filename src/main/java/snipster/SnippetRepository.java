@@ -233,6 +233,30 @@ public class SnippetRepository {
         return snippets;
     }
 
+    private static List<String> splitLine(String line) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+
+        Boolean insideQuotes = false;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '\"') {
+                if (insideQuotes) {
+                    current.append(c);
+                }
+                insideQuotes = !insideQuotes;
+            } else if (c == ',' && !insideQuotes) {
+                parts.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(c);
+            }
+        }
+        parts.add(current.toString());
+
+        return parts;
+    }
+
     public static void exportSnippets(String filePath) {
         String sql = "SELECT id, title, code, tags FROM snippets";
 
@@ -247,9 +271,12 @@ public class SnippetRepository {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
+                title = title.replace("\"", "\"\"");
                 String code = rs.getString("code");
                 code = code.replace("\n", "\\n");
+                code = code.replace("\"", "\"\"");
                 String tags = rs.getString("tags");
+                tags = tags.replace("\"", "\"\"");
 
                 writer.write("\"" + id + "\",\"" + title + "\",\"" + code + "\",\"" + tags + "\"");
                 writer.newLine();
