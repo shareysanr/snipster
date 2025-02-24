@@ -43,13 +43,16 @@ public class SnippetGUI extends Application {
         Button exportSnippetButton = new Button("Export Snippets");
         exportSnippetButton.setOnAction(e -> exportSnippetsPage(primaryStage));
 
+        Button importSnippetButton = new Button("Import Snippets");
+        importSnippetButton.setOnAction(e -> importSnippetsPage(primaryStage));
+
         Button clearSnippetsButton = new Button("Clear Snippets");
         clearSnippetsButton.setOnAction(e -> clearSnippetsPage(primaryStage));
 
         VBox homeLayout = new VBox(10);
         homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet, viewFoldersButton,
             searchSnippetButton ,updateSnippetButton, deleteSnippetButton, exportSnippetButton,
-            clearSnippetsButton);
+            importSnippetButton, clearSnippetsButton);
 
         Scene homeScene = new Scene(homeLayout, 300, 300);
 
@@ -73,6 +76,34 @@ public class SnippetGUI extends Application {
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(clearButton, output, backButton);
+
+        Scene scene = new Scene(layout, 400, 400);
+        primaryStage.setScene(scene);
+    }
+
+    private void importSnippetsPage(Stage primaryStage) {
+        Button importButton = new Button("Import Snippets");
+
+        Label fileLabel = new Label("Enter File Name:");
+        TextField fileField = new TextField();
+
+        Label output = new Label();
+        importButton.setOnAction(e -> {
+            String fileName = fileField.getText().trim();
+            if (fileName.isEmpty() || !fileName.toLowerCase().endsWith(".csv")) {
+                output.setText("Invalid file Name");
+            } else {
+                SnippetRepository.importCSVSnippets(fileName);
+                output.setText("Snippets imported from " + fileName);
+            }
+            fileField.setText("");
+        });
+
+        Button backButton = new Button("Back to Home");
+        backButton.setOnAction(e -> start(primaryStage));
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(fileLabel, fileField, importButton, output, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);

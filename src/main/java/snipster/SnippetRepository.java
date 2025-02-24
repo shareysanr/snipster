@@ -212,13 +212,13 @@ public class SnippetRepository {
             String line = reader.readLine();
 
             while (line != null) {
-                String[] parts = line.split(",", 4);
+                List<String> parts = splitLine(line);
 
-                int id = Integer.parseInt(parts[0]); 
-                String title = parts[1];
-                String code = parts[2];
+                int id = Integer.parseInt(parts.get(0)); 
+                String title = parts.get(1);
+                String code = parts.get(2);
                 code = code.replace("\\n", "\n");
-                String tags = parts[3];
+                String tags = parts.get(3);
 
                 snippets.add(new Snippet(id, title, code, tags));
                 line = reader.readLine();
