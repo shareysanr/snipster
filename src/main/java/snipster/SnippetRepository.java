@@ -208,7 +208,7 @@ public class SnippetRepository {
         List<Snippet> snippets = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            reader.readLine(); // Skip the headers
+            reader.readLine();
             String line = reader.readLine();
 
             while (line != null) {
@@ -236,16 +236,15 @@ public class SnippetRepository {
     private static List<String> splitLine(String line) {
         List<String> parts = new ArrayList<>();
         StringBuilder current = new StringBuilder();
+        Boolean startPart = false;
 
-        Boolean insideQuotes = false;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            if (c == '\"') {
-                if (insideQuotes) {
-                    current.append(c);
-                }
-                insideQuotes = !insideQuotes;
-            } else if (c == ',' && !insideQuotes) {
+            if (c == '\"' && i + 1 < line.length() && line.charAt(i + 1) == '\"') {
+                current.append(c);
+            } else if (c == '\"') {
+                startPart = !startPart;
+            } else if (c == ',' && !startPart) {
                 parts.add(current.toString());
                 current.setLength(0);
             } else {

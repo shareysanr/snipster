@@ -88,13 +88,18 @@ public class SnippetGUI extends Application {
         TextField fileField = new TextField();
 
         Label output = new Label();
+
+        ObservableList<Snippet> snippets = FXCollections.observableArrayList();
+        ListView<Snippet> listView = new ListView<>(snippets);
+
         importButton.setOnAction(e -> {
             String fileName = fileField.getText().trim();
             if (fileName.isEmpty() || !fileName.toLowerCase().endsWith(".csv")) {
                 output.setText("Invalid file Name");
             } else {
-                SnippetRepository.importCSVSnippets(fileName);
-                output.setText("Snippets imported from " + fileName);
+                List<Snippet> snippetList = SnippetRepository.importCSVSnippets(fileName);
+                snippets.setAll(snippetList);
+                output.setText("Snippets exported to " + fileName);
             }
             fileField.setText("");
         });
@@ -103,7 +108,7 @@ public class SnippetGUI extends Application {
         backButton.setOnAction(e -> start(primaryStage));
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(fileLabel, fileField, importButton, output, backButton);
+        layout.getChildren().addAll(fileLabel, fileField, importButton, output, listView, backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);
@@ -116,6 +121,8 @@ public class SnippetGUI extends Application {
         TextField fileField = new TextField();
 
         Label output = new Label();
+
+
         exportButton.setOnAction(e -> {
             String fileName = fileField.getText().trim();
             if (fileName.isEmpty() || !fileName.toLowerCase().endsWith(".csv")) {
