@@ -28,9 +28,6 @@ public class SnippetGUI extends Application {
         Button goToReadSnippet = new Button("View Snippets");
         goToReadSnippet.setOnAction(e -> showSnippetsPage(primaryStage));
 
-        Button viewFoldersButton = new Button("View Folders");
-        viewFoldersButton.setOnAction(e -> viewFoldersPage(primaryStage));
-
         Button searchSnippetButton = new Button("Search Snippet");
         searchSnippetButton.setOnAction(e -> searchSnippetPage(primaryStage));
 
@@ -50,7 +47,7 @@ public class SnippetGUI extends Application {
         clearSnippetsButton.setOnAction(e -> clearSnippetsPage(primaryStage));
 
         VBox homeLayout = new VBox(10);
-        homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet, viewFoldersButton,
+        homeLayout.getChildren().addAll(createSnippetButton, goToReadSnippet,
             searchSnippetButton ,updateSnippetButton, deleteSnippetButton, exportSnippetButton,
             importSnippetButton, clearSnippetsButton);
 
@@ -99,7 +96,16 @@ public class SnippetGUI extends Application {
             } else {
                 List<Snippet> snippetList = SnippetRepository.importCSVSnippets(fileName);
                 snippets.setAll(snippetList);
-                output.setText("Snippets exported to " + fileName);
+
+                for (Snippet snippet: snippetList) {
+                    int id = snippet.getId();
+                    String title = snippet.getTitle();
+                    String code = snippet.getCode();
+                    String tags = snippet.getTags();
+                    SnippetRepository.insertSnippet(title, code, tags);
+                    // id will not be there since the database will create a new id for it
+                }
+                output.setText("Snippets imported from " + fileName);
             }
             fileField.setText("");
         });
@@ -226,17 +232,6 @@ public class SnippetGUI extends Application {
 
         VBox layout = new VBox(10);
         layout.getChildren().addAll(listView, doubleClickButton, printLuceneButton, backButton);
-
-        Scene scene = new Scene(layout, 400, 400);
-        primaryStage.setScene(scene);
-    }
-
-    private void viewFoldersPage(Stage primaryStage) {
-        Button backButton = new Button("Back to Home");
-        backButton.setOnAction(e -> start(primaryStage));
-
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(backButton);
 
         Scene scene = new Scene(layout, 400, 400);
         primaryStage.setScene(scene);

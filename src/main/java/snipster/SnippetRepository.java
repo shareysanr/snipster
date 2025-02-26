@@ -242,6 +242,7 @@ public class SnippetRepository {
             char c = line.charAt(i);
             if (c == '\"' && i + 1 < line.length() && line.charAt(i + 1) == '\"') {
                 current.append(c);
+                i++;
             } else if (c == '\"') {
                 startPart = !startPart;
             } else if (c == ',' && !startPart) {
