@@ -9,7 +9,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -59,7 +58,7 @@ public class LuceneIndexer implements AutoCloseable {
 
         String[] queryFields = new String[]{"title", "code", "tags"};
         Query query = new MultiFieldQueryParser(queryFields, new StandardAnalyzer()).parse(queryStr);
-        //Query query = new QueryParser("code", new StandardAnalyzer()).parse(queryStr);
+        
         TopDocs results = searcher.search(query, 10);
 
         for (ScoreDoc hit : results.scoreDocs) {
@@ -69,7 +68,6 @@ public class LuceneIndexer implements AutoCloseable {
             String title = doc.get("title");
             String code = doc.get("code");
             String tags = doc.get("tags");
-            //System.out.println("Title is: " + doc.get("title"));
             searchResults.add(new Snippet(id, title, code, tags));
         }
 
@@ -131,19 +129,4 @@ public class LuceneIndexer implements AutoCloseable {
     }
 
 }
-    // public void searchSnippets(String queryStr) throws Exception {
-    //     DirectoryReader reader = DirectoryReader.open(indexDirectory);
-    //     IndexSearcher searcher = new IndexSearcher(reader);
-    //     StoredFields storedFields = searcher.storedFields();
-
-    //     Query query = new QueryParser("code", new StandardAnalyzer()).parse(queryStr);
-    //     TopDocs results = searcher.search(query, 10);
-
-    //     for (ScoreDoc hit : results.scoreDocs) {
-    //         Document doc = storedFields.document(hit.doc);
-    //         System.out.println("Title is: " + doc.get("title"));
-    //     }
-
-    //     reader.close();
-    // }
 

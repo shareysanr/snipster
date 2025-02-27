@@ -114,38 +114,6 @@ public class SnippetRepository {
         return snippets;
     }
 
-    public static List<Integer> readSnippetIds() {
-        String sql = "SELECT id FROM snippets";
-        List<Integer> ids = new ArrayList<>();
-        try (Connection conn = DatabaseConnector.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                ids.add(rs.getInt("id"));
-            }
-        } catch (Exception e) {
-            System.out.println("Error reading IDs");
-            e.printStackTrace();
-        }
-        return ids;
-    }
-
-    public static List<String> readSnippetTitles() {
-        String sql = "SELECT title FROM snippets";
-        List<String> titles = new ArrayList<>();
-        try (Connection conn = DatabaseConnector.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                titles.add(rs.getString("title"));
-            }
-        } catch (Exception e) {
-            System.out.println("Error reading snippets");
-            e.printStackTrace();
-        }
-        return titles;
-    }
-
     public static void updateSnippet(int id, String title, String code, String tags) {
         String sql = "UPDATE snippets SET title = ?, code = ?, tags = ? WHERE id = ?";
         try (Connection conn = DatabaseConnector.connect();
@@ -157,9 +125,7 @@ public class SnippetRepository {
             pstmt.setInt(4, id);
             pstmt.executeUpdate();
 
-            //LuceneIndexer indexer = new LuceneIndexer("index");
             indexer.updateIndex(id, title, code, tags);
-            //indexer.updateIndex(id, title, code, tags);
 
             System.out.println("Snippet updated");
         } catch (Exception e) {
@@ -176,8 +142,6 @@ public class SnippetRepository {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
             
-            //LuceneIndexer indexer = new LuceneIndexer("index");
-            //indexer.deleteIndex(id);
             indexer.deleteIndex(id);
 
             System.out.println("Snippet deleted");
@@ -194,7 +158,6 @@ public class SnippetRepository {
              LuceneIndexer indexer = LuceneIndexer.getInstance()) {
             stmt.executeUpdate(sql);
 
-            //LuceneIndexer indexer = new LuceneIndexer("index");
             indexer.clearIndex();
 
             System.out.println("Table cleared");
